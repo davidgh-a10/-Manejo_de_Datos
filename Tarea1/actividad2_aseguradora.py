@@ -1,13 +1,11 @@
 """
 Manejo de Datos - Facultad de Ciencias, UNAM
 Actividad 2: Calculadora de prima de seguro (Aseguradora)
-
-
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-
+# Excepciones propias
 class EdadInvalidaError(Exception):
     """Se lanza cuando la edad ingresada no es un entero entre 18 y 99."""
 
@@ -27,7 +25,7 @@ class RespuestaSiNoInvalidaError(Exception):
 class TasaCambioInvalidaError(Exception):
     """Se lanza cuando la tasa de cambio es cero, negativa o no numérica."""
 
-
+#Diseño extensible (Open/Closed) - Estrategias de factor de edad
 
 class FactorEdadStrategy(ABC):
     """Interfaz para calcular el factor K según la edad ajustada."""
@@ -74,7 +72,7 @@ def obtener_estrategia_factor(sexo: str) -> FactorEdadStrategy:
     return FactorFemenino() if sexo == "F" else FactorMasculino()
 
 
-
+#Conversión de moneda desacoplada (Dependency Inversion)
 class ServicioTasaCambio(ABC):
     """Abstracción de un servicio externo que provee la tasa MXN/USD."""
 
@@ -100,7 +98,7 @@ class ServicioTasaCambioFijo(ServicioTasaCambio):
     def obtener_tasa(self) -> float:
         return self._tasa
 
-
+#Modelo de datos del asegurado
 
 @dataclass
 class Asegurado:
@@ -124,7 +122,7 @@ class Asegurado:
         return max(18, min(99, edad))
 
 
-
+# Calculadora de prima
 class CalculadoraPrima:
     def __init__(self, servicio_tasa: ServicioTasaCambio):
         self.servicio_tasa = servicio_tasa
@@ -139,7 +137,7 @@ class CalculadoraPrima:
         return asegurado
 
 
-
+#Validación con reintrgros
 def leer_nombre() -> str:
     while True:
         nombre = input("Nombre del asegurado: ").strip()
@@ -210,8 +208,7 @@ def capturar_asegurado() -> Asegurado:
     return Asegurado(nombre, edad, sexo, fumador, extra_prima, sa)
 
 
-
-
+#Procesamiento por lotes y reporte
 class GeneradorReporte:
     @staticmethod
     def generar(asegurados: list[Asegurado]) -> str:
@@ -241,7 +238,7 @@ class GeneradorReporte:
             lineas.append("Ningún asegurado tiene extra-prima.")
         return "\n".join(lineas)
 
-
+#Exportacion de carnets
 class ExportadorCarnet:
     def __init__(self, ruta: str):
         self.ruta = ruta
